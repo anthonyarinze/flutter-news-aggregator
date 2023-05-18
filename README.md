@@ -1,15 +1,15 @@
-Flutter News Aggregator App
+# Flutter News Aggregator App
 
 This is a Flutter app that aggregates news from various sources and displays them in a single, user-friendly interface. The app allows users to search for news by topic, keyword, or source, and to save articles for later reading. It also includes a variety of features to customize the user experience, such as dark mode, font size, and news sources.
 
-Features:
+# Features:
 
 - Aggregates news from various sources, including BBC News, CNN, and The Guardian
 - Allows users to search for news by topic, keyword, or source
 - Saves articles for later reading
 - Includes a variety of features to customize the user experience, such as dark mode, font size, and news sources
 
-Tech Stack:
+# Tech Stack:
 
 - Flutter
 - Dart
