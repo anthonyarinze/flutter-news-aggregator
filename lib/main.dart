@@ -23,9 +23,7 @@ class MyApp extends StatelessWidget {
             theme: ThemeData.light(useMaterial3: true),
             darkTheme: ThemeData.dark(),
             themeMode: themeProvider.currentTheme,
-            home: const Scaffold(
-              body: HomePage(),
-            ),
+            home: const HomePage(),
           );
         },
       ),
