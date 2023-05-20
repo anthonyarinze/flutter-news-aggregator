@@ -22,6 +22,7 @@ class MajorHeadlines extends StatelessWidget {
       curve: Curves.easeInOutCubic,
       margin: EdgeInsets.all(margin),
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.0),
         image: DecorationImage(
           image: images,
         ),

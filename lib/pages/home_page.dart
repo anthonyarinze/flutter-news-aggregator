@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:news_aggregator/components/headlines_card.dart';
+import 'package:news_aggregator/components/news_card.dart';
 import 'package:news_aggregator/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -56,12 +57,14 @@ class _HomePageState extends State<HomePage> {
                             horizontal: 15.0, vertical: 10.0),
                         child: IconButton(
                           onPressed: () {
-                            themeProvider.toggleTheme();
+                            setState(() {
+                              themeProvider.toggleTheme();
+                            });
                           },
                           icon: Icon(
                             themeProvider.isDarkMode
                                 ? Icons.sunny
-                                : Icons.lightbulb,
+                                : Icons.nightlight,
                             size: 30,
                           ),
                         ),
@@ -108,6 +111,20 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: indicators(imgList.length, activePage),
                   ),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10.0, top: 20.0),
+                      child: Text(
+                        "Recommended",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const NewsCard(),
                 ],
               ),
             ],
