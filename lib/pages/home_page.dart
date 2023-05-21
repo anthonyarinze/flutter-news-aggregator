@@ -6,6 +6,7 @@ import 'package:news_aggregator/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Future<List<Widget>> fetchArticles() async {
+    String? apiKey = dotenv.env['API_KEY'];
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     //Check if cached data exists
@@ -52,7 +54,7 @@ class _HomePageState extends State<HomePage> {
     } else {
       var response = await http.get(
         Uri.parse(
-            'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=00b2bc9194904ffb98a7823f86d841c6'),
+            'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=$apiKey'),
       );
 
       if (response.statusCode == 200) {
@@ -86,8 +88,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
+    await dotenv.load();
     _pageController = PageController(viewportFraction: 0.8);
   }
 
