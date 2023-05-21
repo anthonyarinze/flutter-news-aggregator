@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
-class NewsCard extends StatefulWidget {
-  const NewsCard({super.key});
+class NewsCard extends StatelessWidget {
+  final String networkImage;
+  final String title;
+  final String author;
+  final String date;
+  const NewsCard({
+    super.key,
+    required this.networkImage,
+    required this.title,
+    required this.author,
+    required this.date,
+  });
 
-  @override
-  State<NewsCard> createState() => _NewsCardState();
-}
-
-class _NewsCardState extends State<NewsCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,9 +36,9 @@ class _NewsCardState extends State<NewsCard> {
             width: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8.0),
-              image: const DecorationImage(
+              image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('images/star.jpg'),
+                image: NetworkImage(networkImage),
               ),
             ),
           ),
@@ -46,50 +51,53 @@ class _NewsCardState extends State<NewsCard> {
               borderRadius: BorderRadius.circular(20.0),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Sports',
+                const Text(
+                  'Trending',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 5.0),
+                const SizedBox(height: 5.0),
                 Text(
-                  'Manchester United takeover news',
-                  style: TextStyle(
+                  title,
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
                 Row(
                   children: [
                     Text(
-                      'Sky Sports ●',
+                      '$author ● ',
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    Text(
-                      ' Feb 27th 2023',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                    Expanded(
+                      child: Text(
+                        date,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 5.0),
+                const SizedBox(height: 5.0),
               ],
             ),
           ),

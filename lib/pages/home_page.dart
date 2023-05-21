@@ -25,39 +25,43 @@ class _HomePageState extends State<HomePage> {
     "images/star.jpg",
   ];
 
-  void fetchArticles() async {
-    final response = await http.get(
+  Future<List<Widget>> fetchArticles() async {
+    var response = await http.get(
       Uri.parse(
-          'https://newsapi.org/v2/everything?q=tesla&from=2023-04-20&sortBy=publishedAt&apiKey=00b2bc9194904ffb98a7823f86d841c6'),
+          'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=00b2bc9194904ffb98a7823f86d841c6'),
     );
-    final responseData = jsonDecode(response.body);
-    print(responseData);
+
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      var articles = responseData['articles'];
+      List<Widget> newsCards = [];
+
+      for (var article in articles) {
+        String? image = article['urlToImage'] ?? '';
+        String? title = article['title'] ?? '';
+        String? author = article['source']['name'] ?? '';
+        String? date = article['publishedAt'] ?? '';
+
+        Widget newsCard = NewsCard(
+          networkImage: image!,
+          title: title!,
+          author: author!,
+          date: date!,
+        );
+
+        newsCards.add(newsCard);
+      }
+
+      return newsCards;
+    } else {
+      throw Exception('Failed to fetch news articles');
+    }
   }
-
-  // Future fetchArticles() async {
-  //   final response = await http.get(
-  //     Uri.parse(
-  //         'https://newsapi.org/v2/everything?q=tesla&from=2023-04-20&sortBy=publishedAt&apiKey=00b2bc9194904ffb98a7823f86d841c6'),
-  //   );
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-  //     //Parse the response data into a list of NewsArticle objects
-  //     List newsArticles =
-  //         responseData.map((item) => NewsArticle.fromJson(item)).toList();
-  //     print(newsArticles);
-  //     return newsArticles;
-  //   } else {
-  //     print('Failed to fetch articles');
-  //     throw Exception('Failed to fetch news articles');
-  //   }
-  // }
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 0.8);
-    fetchArticles();
   }
 
   @override
@@ -156,7 +160,22 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  const NewsCard(),
+                  FutureBuilder<List<Widget>>(
+                    future: fetchArticles(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        return Column(
+                          children: snapshot.data!,
+                        );
+                      } else {
+                        return const Text('No articles found');
+                      }
+                    },
+                  ),
                 ],
               ),
             ],
