@@ -25,6 +25,23 @@ class MajorHeadlines extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
         image: DecorationImage(
           image: images,
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Colors.black.withOpacity(0.5),
+        ),
+        child: const Center(
+          child: Text(
+            'Your Text Here',
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );

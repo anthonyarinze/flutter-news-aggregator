@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:news_aggregator/components/headlines_card.dart';
 import 'package:news_aggregator/components/news_card.dart';
 import 'package:news_aggregator/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,35 +26,62 @@ class _HomePageState extends State<HomePage> {
   ];
 
   Future<List<Widget>> fetchArticles() async {
-    var response = await http.get(
-      Uri.parse(
-          'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=00b2bc9194904ffb98a7823f86d841c6'),
-    );
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    if (response.statusCode == 200) {
-      var responseData = jsonDecode(response.body);
-      var articles = responseData['articles'];
-      List<Widget> newsCards = [];
+    //Check if cached data exists
+    if (prefs.containsKey('cachedArticles')) {
+      //Retrieve cached data
+      final cachedData = prefs.getString('cachedArticles').toString();
+      final cachedArticles = jsonDecode(cachedData) as List<dynamic>;
 
-      for (var article in articles) {
+      //transform cached data into widgets
+      final newsCards = cachedArticles.map<Widget>((article) {
         String? image = article['urlToImage'] ?? '';
         String? title = article['title'] ?? '';
         String? author = article['source']['name'] ?? '';
         String? date = article['publishedAt'] ?? '';
 
-        Widget newsCard = NewsCard(
+        return NewsCard(
           networkImage: image!,
           title: title!,
           author: author!,
           date: date!,
         );
-
-        newsCards.add(newsCard);
-      }
-
+      }).toList();
       return newsCards;
     } else {
-      throw Exception('Failed to fetch news articles');
+      var response = await http.get(
+        Uri.parse(
+            'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=00b2bc9194904ffb98a7823f86d841c6'),
+      );
+
+      if (response.statusCode == 200) {
+        var responseData = jsonDecode(response.body);
+        var articles = responseData['articles'];
+        List<Widget> newsCards = [];
+
+        for (var article in articles) {
+          String? image = article['urlToImage'] ?? '';
+          String? title = article['title'] ?? '';
+          String? author = article['source']['name'] ?? '';
+          String? date = article['publishedAt'] ?? '';
+
+          Widget newsCard = NewsCard(
+            networkImage: image!,
+            title: title!,
+            author: author!,
+            date: date!,
+          );
+
+          newsCards.add(newsCard);
+        }
+        //cache the fetched articles
+        prefs.setString('cachedArticles', jsonEncode(articles));
+
+        return newsCards;
+      } else {
+        throw Exception('Failed to fetch news articles');
+      }
     }
   }
 
@@ -109,44 +136,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              const Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10.0, bottom: 10.0),
-                  child: Text(
-                    "Major headlines",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-                  ),
-                ),
-              ),
               Column(
                 children: [
-                  SizedBox(
-                    height: 200,
-                    width: MediaQuery.of(context).size.width,
-                    child: PageView.builder(
-                      itemCount: imgList.length,
-                      pageSnapping: true,
-                      controller: _pageController,
-                      onPageChanged: (page) {
-                        setState(() {
-                          activePage = page;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        bool active = index == activePage;
-                        return MajorHeadlines(
-                          images: AssetImage(imgList.first),
-                          index: index,
-                          active: active,
-                        );
-                      },
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: indicators(imgList.length, activePage),
-                  ),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Padding(

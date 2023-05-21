@@ -86,7 +86,7 @@ class NewsCard extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        date,
+                        date.substring(0, 10),
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontSize: 14,
